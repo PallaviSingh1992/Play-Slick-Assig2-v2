@@ -1,0 +1,115 @@
+@(list:List[Award],awardForm:Form[Award])(implicit msg:Messages)
+
+<div id="showAward">
+</div>
+
+@views.html.main("awards"){
+<div class="container" id="c1">
+    <div class="jumbotron">
+        <table class="table table-hover">
+            <thead>
+            <tr> <th>ID</th><th>Name</th><th>Details</th> <th>Update</th>  <th>Delete</th></tr>
+            </thead>
+            <tbody>
+            @for(li<-list){
+            <tr>
+                <td>@li.id</td><td>@li.name</td> <td>@li.details</td>
+                <td><button type="button" class="btn btn-info btn-lg " data-toggle="modal" data-target="#myUpdate">Update</button></td>
+                <!--<td><a href="@routes.AwardController.delete(li.name)">Delete</a></td>-->
+                <td>
+                    <button type="button"  value="@li.name" class="btn btn-danger deleteButton">
+                        <span class="glyphicon glyphicon-remove"></span> Delete
+                    </button>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">Add Award</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" name="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add new Award</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        @helper.form(action=routes.AwardController.add()){
+                        @helper.inputText(awardForm("id"),'_label->"Id")
+                        @helper.inputText(awardForm("name"),'_label->"Name")
+                        @helper.inputText(awardForm("details"),'_label->"Details")
+                        <button type="submit" class="btn btn-link addButton" href="">Add</button>
+                        }
+                        <!--<button type="button" class="btn btn-warning pull-right">Action</button>-->
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <div class="modal fade" id="myUpdate" name="myUpdate" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Modal Header</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                @helper.form(action=routes.AwardController.update()){
+                                @helper.inputText(awardForm("id"),'_label->"Id")
+                                @helper.inputText(awardForm("name"),'_label->"Name")
+                                @helper.inputText(awardForm("details"),'_label->"Details")
+                                <button type="submit" class="btn btn-link" href="">update</button>
+                                }
+                                <button type="button" class="btn btn-warning pull-right">Action</button>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+            function refreshTable() {
+                    $.get(" listbyid ", function(data, status){
+                $("#showAward").html(data)
+                 });
+            }
+
+              $(".deleteButton").click(function(){
+                 var row = $(this);
+                var id = $(this).attr('value');
+                $("#showAward").html("")
+                    $.ajax({     type : 'GET',
+                                       url : "deleteaward/"+id ,
+                                       success: function (data) {
+                                      row.closest('tr').remove();
+                        },
+                        error: function (data, status) {
+                            alert("Something Went Wrong");
+                            refreshTable();
+                        }
+                                   });
+
+                });
+
+
+            </script>
+
+
+</div>
+
+}

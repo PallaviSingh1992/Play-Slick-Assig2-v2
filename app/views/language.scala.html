@@ -1,0 +1,81 @@
+@(list:List[Language],awardForm:Form[Language])(implicit msg:Messages)
+
+<div id="showLang">
+</div>
+@views.html.main("language"){
+<div class="container">
+    <div class="jumbotron">
+
+        <table class="table table-hover">
+            <thead><tr>
+                <th>ID</th><th>Name</th><th>Fluency</th><th>Update</th><th>Delete</th>
+            </tr></thead>
+            <tbody>
+            @for(li<-list){
+            <tr>
+                <td>@li.id</td><td>@li.name</td><td>@li.fluency</td>
+                <td><button type="button" class="btn btn-info btn-lg " data-toggle="modal" data-target="#myUpdate">Update</button></td>
+                <!--<td><a href="@routes.LanguageController.delete(li.name)">Delete</a></td>-->
+                <td>
+                    <button type="button"  value="@li.name" class="btn btn-danger deleteButton">
+                        <span class="glyphicon glyphicon-remove"></span> Delete
+                    </button>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">Add Language</button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" name="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add new Language</h4>
+                </div>
+                <div class="modal-body"><p>
+                        @helper.form(action=routes.LanguageController.add()){
+                        @helper.inputText(awardForm("id"),'_label->"Id")
+                        @helper.inputText(awardForm("name"),'_label->"Name")
+                        @helper.inputText(awardForm("fluency"),'_label->"Details")
+                        <button type="submit" class="btn btn-link" href="">Add</button>
+                        }
+                        <button type="button" class="btn btn-warning pull-right">Action</button>
+                </p></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+            function refreshTable() {
+                    $.get(" listlangid  ", function(data, status){
+                $("#showLang").html(data)
+                 });
+            }
+
+              $(".deleteButton").click(function(){
+                 var row = $(this);
+                var id = $(this).attr('value');
+                $("#showLang").html("")
+                    $.ajax({     type : 'GET',
+                                       url : "deletelang/"+id ,
+                                       success: function (data) {
+                                      row.closest('tr').remove();
+                        },
+                        error: function (data, status) {
+                            alert("Something Went Wrong");
+                            refreshTable();
+                        }
+                                   });
+
+                });
+
+
+            </script>
+</div>
+}
