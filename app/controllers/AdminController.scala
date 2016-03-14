@@ -15,8 +15,8 @@ class AdminController @Inject()(admin:AdminServiceApi,service:AssignmentServiceA
 
   def listAll=Action.async { implicit request =>
     val id=request.session.get("id").get.toInt
-    service.getAssignmentById(id).map{ list => Ok("Success")
-      //Ok(views.html.assignmentdis(list.toList))
+    service.getAssignmentById(id).map{ list =>
+      Ok(views.html.assignmentdis(list.toList))
     }
   }
 
